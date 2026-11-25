@@ -27,12 +27,26 @@ SENTENCE = (
 
 def main() -> None:
     text = SENTENCE.strip()
+    # Brief constraints: exactly one sentence, 1-200 characters, no extra
+    # whitespace. Each failure names the rule and the offending value so
+    # a bad edit is caught here instead of reaching the judges.
     if not 1 <= len(text) <= 200:
         raise SystemExit(
-            f"Invalid entry: {len(text)} characters (need 1-200)."
+            f"Invalid entry: {len(text)} characters, "
+            "but the brief requires 1-200 characters."
         )
-    if text.count(".") != 1 or not text.endswith("."):
-        raise SystemExit("Invalid entry: must be exactly one sentence.")
+    if SENTENCE != SENTENCE.strip() or "  " in SENTENCE:
+        raise SystemExit(
+            "Invalid entry: entry must not contain leading, trailing "
+            "or doubled whitespace."
+        )
+    period_count = text.count(".")
+    if period_count != 1 or not text.endswith("."):
+        raise SystemExit(
+            f"Invalid entry: found {period_count} period(s) and "
+            f"ends with {text[-1:]!r}; the brief requires exactly one "
+            "sentence ending with a single period."
+        )
     os.makedirs("/output", exist_ok=True)
     with open("/output/entry.txt", "w", encoding="utf-8", newline="") as f:
         f.write(text)
